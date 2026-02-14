@@ -1,0 +1,25 @@
+/* Custom styles */
+body {
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+}
+
+.card {
+    border-radius: 12px;
+    border: none;
+}
+
+.btn-lg {
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+}
+
+/* Smartphone optimization adjustments */
+@media (max-width: 576px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>過去問演習 | スキマで覚える土地家屋調査士</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function showExplanation(type) {
+            document.getElementById('explanation-nb').style.display = 'none';
+            document.getElementById('explanation-gemini').style.display = 'none';
+            document.getElementById('btn-nb').classList.remove('active');
+            document.getElementById('btn-gemini').classList.remove('active');
+
+            if (type === 'notebooklm') {
+                document.getElementById('explanation-nb').style.display = 'block';
+                document.getElementById('btn-nb').classList.add('active');
+            } else {
+                document.getElementById('explanation-gemini').style.display = 'block';
+                document.getElementById('btn-gemini').classList.add('active');
+            }
+        }
+
+        function checkAnswer(userAns) {
+            const correctAns = {{ question['Answer'] | tojson
+        }}; // Use tojson for safe string encoding
+        // Simple check logic could go here, but currently we just show the result.
+
+        document.getElementById('result-area').style.display = 'block';
+
+        // Auto-scroll to result
+        document.getElementById('result-area').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</head>
+
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-light bg-white shadow-sm mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Hashtag House Investigator</a>
+            <span class="badge bg-secondary">{{ question['Year'] }} - {{ question['QuestionID'] }}</span>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <!-- Question Card -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="mb-2">
+                    <span class="badge bg-primary fs-6 me-2">{{ question['Year'] }}</span>
+                    <span class="badge bg-info text-dark me-2">{{ question['Category'] }}</span>
+                    <span class="text-muted small">{{ question['Topic'] }}</span>
+                </div>
+                <!-- Preserving line breaks -->
+                <p class="card-text fs-5" style="white-space: pre-wrap;">{{ question['Question'] }}</p>
+            </div>
+        </div>
+
+        <!-- Answer Actions -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <p class="fw-bold mb-3">回答を選択（想定）:</p>
+                <div class="d-flex justify-content-between gap-2 overflow-auto">
+                    <!-- Dummy buttons for interaction -->
+                    <button onclick="checkAnswer(1)" class="btn btn-outline-dark flex-grow-1">1</button>
+                    <button onclick="checkAnswer(2)" class="btn btn-outline-dark flex-grow-1">2</button>
+                    <button onclick="checkAnswer(3)" class="btn btn-outline-dark flex-grow-1">3</button>
+                    <button onclick="checkAnswer(4)" class="btn btn-outline-dark flex-grow-1">4</button>
+                    <button onclick="checkAnswer(5)" class="btn btn-outline-dark flex-grow-1">5</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result & Explanation Area (Hidden initially) -->
+        <div id="result-area" style="display: none;">
+            <!-- Answer Reveal -->
+            <div class="alert alert-success d-flex align-items-center mb-4" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                </svg>
+                <div>
+                    {{ question['Answer'] }}
+                </div>
+            </div>
+
+            <!-- Explanation Tabs -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="btn-nb" href="javascript:void(0)"
+                                onclick="showExplanation('notebooklm')">NotebookLM</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="btn-gemini" href="javascript:void(0)"
+                                onclick="showExplanation('gemini')">Gemini</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <!-- NotebookLM Content -->
+                    <div id="explanation-nb">
+                        <h5 class="card-title text-primary mb-3">NotebookLMの解説</h5>
+                        <div class="card-text pt-2" style="white-space: pre-wrap;">{{ question['Explanation_NotebookLM']
+                            }}</div>
+                    </div>
+
+                    <!-- Gemini Content -->
+                    <div id="explanation-gemini" style="display: none;">
+                        <h5 class="card-title text-success mb-3">Geminiの解説</h5>
+                        <div class="alert alert-light border">
+                            <small class="text-muted">※H列のデータを表示しています</small>
+                            <div class="pt-2" style="white-space: pre-wrap;">{{ question['Explanation_Gemini'] }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 text-center">
+                {% if has_next %}
+                <a href="{{ url_for('next_question', year=year, category=category, topic=topic, index=index) }}"
+                    class="btn btn-primary btn-lg w-100 mb-3">次の問題へ</a>
+                {% else %}
+                <div class="alert alert-info">この条件の問題は以上です。</div>
+                {% endif %}
+
+                <a href="{{ url_for('index') }}" class="btn btn-warning text-white w-100">メイン画面に戻る</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

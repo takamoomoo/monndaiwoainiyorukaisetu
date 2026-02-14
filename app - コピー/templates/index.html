@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スキマで覚える土地家屋調査士</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bold text-primary">スキマで覚える<br>土地家屋調査士</h1>
+            <p class="lead text-muted">スマホでサクッと過去問演習</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <!-- Year Selection -->
+            <div class="col-md-5">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-white fw-bold">年度で選ぶ</div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            {% for year in years %}
+                            <a href="{{ url_for('quiz', year=year) }}" class="btn btn-outline-primary">{{ year }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Selection -->
+            <div class="col-md-5">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-white fw-bold">分野で選ぶ</div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            {% for cat in categories %}
+                            <a href="{{ url_for('quiz', category=cat) }}" class="btn btn-outline-success">{{ cat }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+             <a href="{{ url_for('quiz') }}" class="btn btn-lg btn-warning text-white w-100" style="max-width: 300px;">
+                ランダムに出題
+            </a>
+        </div>
+    </div>
+</body>
+</html>
