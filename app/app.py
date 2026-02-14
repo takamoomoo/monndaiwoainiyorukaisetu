@@ -6,7 +6,9 @@ import re
 
 app = Flask(__name__)
 
-DATA_FILE = r"E:\Mypython\土地家屋調査士試験\app\data.csv"
+# Use relative path for compatibility with both local Windows and Render (Linux)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_FILE = os.path.join(BASE_DIR, 'data.csv')
 
 def extract_number(text):
     # Extract number from "問１" or "第1問" etc. using regex
